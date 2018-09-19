@@ -1,59 +1,67 @@
 import React from 'react';
 import { connect } from 'react-redux';
+import * as actions from '../../actions/actions';
+
 import './navbar.css';
 
 
 
 const mapStateToProps = store => ({
-  table: store.data.table,  
+  tables: store.data.tables,  
 });
 
 
 const mapDispatchToProps = dispatch => ({
-  exportTable: table => dispatch(actions.exportTable(table)) 
-  //saveTable: table => dispatch(actions.saveTable(table)) 
+  exportTable: tables => dispatch(actions.exportTable(tables)), 
+  saveTable: tables => dispatch(actions.saveTable(tables)) 
+
 });
 
  
 class MainNav extends React.Component {
   constructor(props) {
     super(props);
-    //this.handleSave= this.handleSave.bind(this)
-    //this.handleExport = this.handleExportbind(this)
-  }
+    this.createTable = this.createTable.bind(this);
+    this.handleSaveTable= this.handleSaveTable.bind(this)
+    this.handleExportTable = this.handleExportTable.bind(this);
 
-  handleExport(event){
-    event.preventDefault();
-    this.props.exportTable(this.props.table);
-    // this.props.handleExport({
-    //   tableIndex: this.props.tableIndex,
-    //   fieldIndex: event.target.id,
-    //   submitUpdate: false
-    // })
   }
+    
+  createTable(event){
+    this.props.saveTable(this.props.tables);
+  }
+    
+    handleSaveTable(event){
+      this.props.saveTable(this.props.tables);
+    }
+   
+    handleExportTable(event){
+    this.props.exportTable(this.props.tables);
+    }
   
-
   
   render() {
     return (
-    <nav className="navbar-nav fixed-top navbar-dark bg-light">
+      <nav className="navbar-nav fixed-top navbar-dark bg-light">
         <div className="navbar-nav-container">
-        <container>
           <div className="btn-group" role="group" aria-label="Basic example">
-            <button type="button" className="btn btn-outline-secondary">New</button>
-            <button type="button" className="btn btn-secondary">Save</button>
+            <button type="button" className="btn btn-outline-secondary" onClick={this.createTable}>New Table</button>
             <button type="button" className="btn btn-secondary">Load</button>
-            <button type="button" className="btn btn-secondary">Export</button>
-          </div>
+            <button type="button" className="btn btn-secondary" onClick={this.handleSaveTable}>Save</button>
+            <button 
+              className="btn btn-secondary"
+              onClick={this.handleExportTable}
+              >Export
+            </button>    
           <div className="btn-group justify-content-end" role="group" aria-label="Basic example">
             <button className="btn btn-outline-success my-2 my-md-0" type="submit">Account</button>
             <button className="btn btn-outline-success my-2 my-md-0" type="submit">Logout</button>
           </div>
-          </container>
-        </div>       
-    </nav>
-   );
- }
+        </div>
+        </div>
+      </nav>
+    );
+  }
 }
 export default connect (mapStateToProps, mapDispatchToProps)(MainNav);
 
