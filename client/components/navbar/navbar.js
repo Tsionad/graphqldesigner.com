@@ -8,7 +8,8 @@ import './navbar.css';
 
 const mapStateToProps = store => ({
   tableIndex: store.data.tableIndex,
-  tables: store.data.tables
+  tables: store.data.tables,
+  fields: store.data.fields
 });
 
 
@@ -35,19 +36,42 @@ class MainNav extends React.Component {
     saveFile(event){
       this.props.saveFile(this.props.tables);
     }
-   
+       
+
+  exportFile(event) {
+    dirPaths => {
+      if (!dirPaths) {
+        return;
+      }
+      const dirPath = dirPaths[0];
+      const data = Object.assign({}, {data: this.props.tables}, {
+        database: 'MongoDB'})
+
+      const { paths = [], files = [] } = exportFile(dirPath, data) || {};
     
-    exportFile(event){
-    const data = Object.assign({}, {data: this.props.tables}, {
-      database: 'MongoDB'
-    })
-    fetch('http://localhost:4100/write-files', {
-      method: 'POST',
-      headers: {
-        "Content-Type": "application/json"
-      },
-      body: JSON.stringify(data)
-     })
+    //to create a directory if it doesn't exist
+
+      paths.forEach(path => {
+        if (!fs.existsSync(path)) {
+          fs.mkdirSync(path);
+        }
+      });
+
+      files.forEach(file => fs.writeFileSync(file.path, file.content));
+
+    
+      if (callback) {  // if true async that that particular element of the iterator is done
+        callback();
+      } () => { console.log(err); }
+    };
+}
+    // fetch('http://localhost:4100/write-files', {
+    //   method: 'POST',
+    //   headers: {
+    //     "Content-Type": "application/json"
+    //   },
+    //   body: JSON.stringify(data)
+    //  })
 
      //.then(res => console.log(res))
     //  .then(res => new Response(res.body))
@@ -68,8 +92,8 @@ class MainNav extends React.Component {
     //     element.click();
     //  })
 
-     .catch((err) => console.log(err))
-    }
+    //  .catch((err) => console.log(err))
+    // }
   
     render() {
       return (
