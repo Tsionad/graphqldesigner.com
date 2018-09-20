@@ -61,6 +61,22 @@ export const handleFieldsSelect = (field) => ({
   payload: field,
 })
 
+<<<<<<< HEAD
+export const createTable = (tableIndex) => ({
+  type: types.CREATE_TABLE,
+  payload: tableIndex,
+})
+
+export const saveFile = (table) => ({
+  type: types.FILE,
+  payload: table,
+})
+
+export const exportFile = (table) => ({
+  type: types.FILE,
+  payload: table
+})
+=======
 // ----------------------------- Query App -------------------------------//
 
 export const createQuery = (query) => ({
@@ -68,3 +84,4 @@ export const createQuery = (query) => ({
   payload: query
 })
 
+>>>>>>> 2ea10f8de656e0db6423ee346a12ce84240ae3c7
