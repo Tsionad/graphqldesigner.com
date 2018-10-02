@@ -30,7 +30,7 @@ const CodeSqlDBSchemaContainer = (props) => {
         schema += createSchemaField(table.fields[fieldId]);
       }
     }
-    schema += `${enter}});${enter}${enter}module.exports = sequelize.model("${table.type}",${table.type}DataTypes);${enter}${enter}`;
+    schema += `${enter}});${enter}${enter}module.exports = sequelize.model("${table.type}",${table.type}DataTypes)`;
 
     return schema;
   }
@@ -71,7 +71,6 @@ const CodeSqlDBSchemaContainer = (props) => {
   return (
     <div className="code-container-side">
       <h4 className='codeHeader'>Database Schemas</h4>
-      <hr/>
       {/* <pre>
         {schema}
       </pre> */}

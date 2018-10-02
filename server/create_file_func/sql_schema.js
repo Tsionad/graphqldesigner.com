@@ -1,18 +1,17 @@
-function parseMongoschema(data, cb) {
-  let query = `const mongoose = require('mongoose');\nconst Schema = mongoose.Schema;\n\nconst ${data.type.toLowerCase()}Schema = new Schema({\n\t`;
-
+function parseSqlSchema(data) {
+  let query = `const sequelize = require('sequelize');\nconst Schema = sequelize.Schema;\n\nconst ${data.type.toLowerCase()}Schema = new Schema({\n\t`;
   let firstLoop = true;
-  for (let prop in data.fields) {
+  for (const prop in data.fields) {
     if (prop !== '0') {
       if (!firstLoop) query += ',\n\t';
       firstLoop = false;
-    
+
       query += createSchemaField(data.fields[prop]);
     }
   }
-  query += `\n});\n\nmodule.exports = mongoose.model("${data.type}", ${data.type.toLowerCase()}Schema);`;
 
-  return cb(query);
+  query += `\n});\n\nmodule.exports = sequelize.model("${data.type}", ${data.type.toLowerCase()}Schema);`;
+  return query;
 }
 
 function createSchemaField(data) {
@@ -40,4 +39,4 @@ function createSchemaField(data) {
   }
 }
 
-module.exports = parseMongoschema;
+module.exports = parseSqlSchema;

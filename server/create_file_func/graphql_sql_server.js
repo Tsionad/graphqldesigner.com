@@ -1,21 +1,21 @@
-function parseGraphqlMongoServer(data) {
+function parseGraphqlSqlServer(data) {
   let query = "const graphql = require('graphql');\n";
 
   for (const prop in data) {
-    query += buildDbModelRequirePaths(data[prop]);
+    query += buildSqlModelRequirePaths(data[prop]);
   }
 
   query += `
-const { 
-    GraphQLObjectType,
-    GraphQLSchema,
-    GraphQLID,
-    GraphQLString, 
-    GraphQLInt, 
-    GraphQLList,
-    GraphQLNonNull
-} = graphql;
-\n`;
+  const { 
+      GraphQLObjectType,
+      GraphQLSchema,
+      GraphQLID,
+      GraphQLString, 
+      GraphQLInt, 
+      GraphQLList,
+      GraphQLNonNull
+  } = graphql;
+  \n`;
 
   // BUILD TYPE SCHEMA
   for (const prop in data) {
@@ -23,7 +23,7 @@ const {
   }
 
   // BUILD ROOT QUERY
-  query += "const RootQuery = new GraphQLObjectType({\n\tname: 'RootQueryType',\n\tfields: {\n";
+  query += "const RootQuery = new GraphQLObjectType({\n\tname: 'Root_Query',\n\tfields: {\n";
 
   let firstRootLoop = true;
   for (const prop in data) {
@@ -50,16 +50,16 @@ const {
   return query;
 }
 
-function buildDbModelRequirePaths(data) {
-  return `const ${data.type} = require('../db-model/${data.type.toLowerCase()}.js');\n`;
+function buildSqlModelRequirePaths(data) {
+  return `const ${data.type} = require('../sql-model/${data.type.toLowerCase()}.js');\n`;
 }
 
 function buildGraphqlTypeSchema(table, data) {
   let query = `const ${table.type}Type = new GraphQLObjectType({\n\tname: '${table.type}',\n\tfields: () => ({`;
 
   let firstLoop = true;
-  for (let prop in table.fields) {
-    if (!firstLoop) query+= ',';
+  for (const prop in table.fields) {
+    if (!firstLoop) query += ',';
     firstLoop = false;
 
     query += `\n\t\t${table.fields[prop].name}: { type: ${checkForMultipleValues(table.fields[prop].multipleValues, 'front')}${tableTypeToGraphqlType(table.fields[prop].type)}${checkForMultipleValues(table.fields[prop].multipleValues, 'back')} }`;
@@ -69,17 +69,16 @@ function buildGraphqlTypeSchema(table, data) {
     }
 
     const refBy = table.fields[prop].refBy;
-    if (refBy.length) {
-
-      refBy.forEach(value => {
+    if (refBy.size) {
+      refBy.forEach((value) => {
         const parsedValue = value.split('.');
         const field = {
           name: table.fields[prop].name,
           relation: {
             tableIndex: parsedValue[0],
             fieldIndex: parsedValue[1],
-            refType: parsedValue[2]
-          }
+            refType: parsedValue[2],
+          },
         };
         query += createSubQuery(field, data);
       });
@@ -109,7 +108,7 @@ function createSubQuery(field, data) {
   const refTypeName = data[field.relation.tableIndex].type;
   const refFieldName = data[field.relation.tableIndex].fields[field.relation.fieldIndex].name;
   const refFieldType = data[field.relation.tableIndex].fields[field.relation.fieldIndex].type;
-  const query = `,\n\t\t${createSubQueryName(refTypeName)}: {\n\t\t\ttype: ${refTypeName}Type,\n\t\t\tresolve(parent, args) {\n\t\t\t\treturn ${refTypeName}.${findDbSearchMethod(refFieldName, refFieldType, field.relation.refType)}(${createSearchObject(refFieldName, refFieldType, field)});\n\t\t\t}\n\t\t}`;
+  const query = `,\n\t\t${createSubQueryName(refTypeName)}: {\n\t\t\ttype: ${refTypeName}Type,\n\t\t\tresolve(parent, args) {\n\t\t\t\treturn ${refTypeName}.${findSqlSearchMethod(refFieldName, refFieldType, field.relation.refType)}(${createSearchObject(refFieldName, refFieldType, field)});\n\t\t\t}\n\t\t}`;
   return query;
 
   function createSubQueryName(tableIndex, data) {
@@ -134,7 +133,7 @@ function createSubQuery(field, data) {
 }
 
 
-function findDbSearchMethod(refFieldName, refFieldType, refType) {
+function findSqlSearchMethod(refFieldName, refFieldType, refType) {
   if (refFieldName === 'id' || refFieldType === 'ID') return 'findById';
   switch (refType) {
     case 'one to one':
@@ -227,4 +226,4 @@ function checkForMultipleValues(multipleValues, position) {
   return '';
 }
 
-module.exports = parseGraphqlMongoServer;
+module.exports = parseGraphqlSqlServer;

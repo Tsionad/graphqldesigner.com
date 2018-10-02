@@ -15,8 +15,8 @@ class CodeApp extends Component {
   
     return (
       <div className='code-app'>
-        <CodeDBSchemaContainer/>
-        {/*<CodeSqlDBSchemaContainer/>*/}
+        <CodeSqlDBSchemaContainer/>
+        {/*<CodeDBSchemaContainer/>*/}
         <CodeServerContainer/>
         <CodeClientContainer/>
       </div>
