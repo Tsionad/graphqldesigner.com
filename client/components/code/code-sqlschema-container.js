@@ -9,18 +9,18 @@ const mapStateToProps = store => ({
   tables: store.schema.tables,
 });
 
-const CodeDBSchemaContainer = (props) => {
+const CodeSqlDBSchemaContainer = (props) => {
   const enter = `
   `;
   const tab = '  ';
 
   let schemaCode = [];
 
-  function parseMongoschema(table) {
+  function parseSqlSchema(table) {
     if (!table) return;
-    let schema = `${tab}const mongoose = require('mongoose');${enter}const Schema = mongoose.Schema;${enter}${enter}`;
+    let schema = `${tab}const sequelize = require('sequelize');${enter}${enter}`;
 
-    const startLine = `const ${table.type.toLowerCase()}Schema = new Schema({${enter}${tab}`;
+    const startLine = `const ${table.type}= sequelize.define("${table.type}", {${enter}${tab}`;
     schema += startLine;
     let firstLoop = true;
     for (const fieldId in table.fields) {
@@ -30,7 +30,7 @@ const CodeDBSchemaContainer = (props) => {
         schema += createSchemaField(table.fields[fieldId]);
       }
     }
-    schema += `${enter}});${enter}${enter}module.exports = mongoose.model("${table.type}",${table.type}Schema);${enter}${enter}`;
+    schema += `${enter}});${enter}${enter}module.exports = sequelize.model("${table.type}",${table.type}DataTypes)`;
 
     return schema;
   }
@@ -62,7 +62,7 @@ const CodeDBSchemaContainer = (props) => {
   for (const tableId in props.tables) {
     schemaCode.push(
       <pre>
-        {parseMongoschema(props.tables[tableId])};
+        {parseSqlSchema(props.tables[tableId])};
         <hr/>
       </pre>
     )
@@ -71,7 +71,6 @@ const CodeDBSchemaContainer = (props) => {
   return (
     <div className="code-container-side">
       <h4 className='codeHeader'>Database Schemas</h4>
-      <hr/>
       {/* <pre>
         {schema}
       </pre> */}
@@ -79,4 +78,4 @@ const CodeDBSchemaContainer = (props) => {
     </div>
   );
 };
-export default connect(mapStateToProps, null)(CodeDBSchemaContainer);
+export default connect(mapStateToProps, null)(CodeSqlDBSchemaContainer);
