@@ -68,7 +68,7 @@ function parseSQLTables(tables) {
     fieldCode += checkAutoIncrement(field.autoIncrement);
     fieldCode += checkRequired(field.required);
     fieldCode += checkUnique(field.unique);
-    fieldCode += checkDefault(field.defaultValue);
+    fieldCode += checkDefault(field.defaultValue, field.type);
 
     if (field.primaryKey) {
       primaryKey.push(field.name);
@@ -117,8 +117,13 @@ function parseSQLTables(tables) {
     return '';
   }
 
-  function checkDefault(fieldDefault) {
-    if (fieldDefault.length > 0) return `${tab}DEFAULT '${fieldDefault}'`;
+  function checkDefault(fieldDefault, dataType) {
+    if (fieldDefault.length > 0) {
+      let defaultString = `${tab}DEFAULT `;
+      if (dataType === 'String') defaultString += `'${fieldDefault}'`;
+      else defaultString += fieldDefault;
+      return defaultString;
+    }
     return '';
   }
 }
