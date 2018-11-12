@@ -32,7 +32,8 @@ module.exports = function(data) {
     }
 
     let firstLoop = true;
-    //CREATE SCHEMA QUERIES
+
+    // CREATE SCHEMA QUERIES
     query += '\ttype Query {\n'
     for ( const tableIndex in data ) {
         const table = data[tableIndex];
@@ -51,7 +52,8 @@ module.exports = function(data) {
     query += '\n\t}\n\n'
 
     firstLoop = true;
-    //CREATE SCHEMA MUTATIONS
+
+    // CREATE SCHEMA MUTATIONS
     query += '\ttype Mutation {\n'
     for ( const tableIndex in data ) {
         const table = data[tableIndex];
@@ -91,37 +93,37 @@ module.exports = function(data) {
 }
 
 function isRequired(data) {
-    if (data) return '!'
-    return ''
+    if (data) return '!';
+    return '';
 }
 
 function typeConverter(type) {
-    if (type === 'Number') return 'Int'
-    return type
+    if (type === 'Number') return 'Int';
+    return type;
 }
 
 function isMultipleNameType(data) {
     if ( data === 'one to one' || data === 'many to one') return 'related'
-    return 'everyRelated'
+    return 'everyRelated';
 }
 
 function isMultiple(type, pos) {
-    if ( type === 'one to many' ) {
-        if ( pos === 'front' ) {
-            return '['
-        }
-        if ( pos === 'back' ) {
-            return ']'
-        }
+  if (type === 'one to many') {
+    if (pos === 'front') {
+      return '[';
     }
-    return ''
+    if (pos === 'back') {
+      return ']';
+    }
+  }
+  return '';
 }
 
 function toTitleCase(str) {
-    return str.replace(
-        /\w\S*/g,
-        function(txt) {
-            return txt.charAt(0).toUpperCase() + txt.substr(1).toLowerCase();
-        }
-    );
+  return str.replace(
+    /\w\S*/g,
+    function (txt) {
+      return txt.charAt(0).toUpperCase() + txt.substr(1).toLowerCase();
+    },
+  );
 }

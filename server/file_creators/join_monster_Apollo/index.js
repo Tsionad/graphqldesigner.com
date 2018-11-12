@@ -1,12 +1,12 @@
 const fs = require('fs');
 const path = require('path');
 
-//Function Imports
+// Function Imports
 const createJoinSchema = require('./create_join_schema');
 const createJoinResolvers = require('./create_join_resolvers');
 const createJoinMetadata = require('./create_join_metadata');
-//const createSequelizeConnection = require('../sequelize');
-//const createSequelizeModels = require('../sequelize/create_sequelize_models');
+// const createSequelizeConnection = require('../sequelize');
+// const createSequelizeModels = require('../sequelize/create_sequelize_models');
 
 module.exports = function(database, data, PATH, dateStamp) {
     fs.writeFileSync(path.join(PATH, `build-files${dateStamp}/server/schema/index.js`), createJoinSchema(data));
